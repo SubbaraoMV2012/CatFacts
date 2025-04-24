@@ -14,5 +14,13 @@ A SwiftUI app that shows a **random cat image** and a **random cat fact** every 
 - Built with **SwiftUI** and **Combine**
 - Optional third-party image caching via `SDWebImageSwiftUI`
 
+## Gif
+
+
+
+https://github.com/user-attachments/assets/105d81c0-dcc9-42e8-b20d-dee97ef397a0
+
+
+
 ---
 
