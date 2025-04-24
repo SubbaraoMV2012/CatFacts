@@ -24,5 +24,4 @@ class CatFactService: CatFactServiceProtocol {
             throw NetworkError.networkError(error)
         }
     }
-    
 }
