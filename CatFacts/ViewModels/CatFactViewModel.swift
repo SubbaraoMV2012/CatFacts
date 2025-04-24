@@ -12,6 +12,11 @@ import SwiftUI
 class CatFactViewModel: ObservableObject {
     @Published var catFact: String?
     @Published var catImageUrl: String?
+    @Published var isLoading: Bool = false
+    @Published var showContent: Bool = false
+    @Published var showError: Bool = false
+    @Published var errorMessage: String = ""
+    
     private let catFactServiceProtocol: CatFactServiceProtocol
     private let catImageServiceProtocol: CatImageServiceProtocol
     
@@ -24,15 +29,21 @@ class CatFactViewModel: ObservableObject {
     }
     
     func getCatData() async {
+        isLoading = true
+        showContent = false
         do {
-            async let catfactMessage = try catFactServiceProtocol.getCatFact()
             async let catImageUrlString = try catImageServiceProtocol.getCatImageURL()
-            self.catFact = try await catfactMessage
+            async let catfactMessage = try catFactServiceProtocol.getCatFact()
             self.catImageUrl = try await catImageUrlString
+            self.catFact = try await catfactMessage
+            withAnimation {
+                showContent = true
+            }
         } catch {
-            self.catFact = "Failed to load content"
-            self.catImageUrl = ""
+            showError = true
+            errorMessage = error.localizedDescription.isEmpty ? "Something went wrong while fetching cat content" : error.localizedDescription
         }
+        isLoading = false
     }
     
 }
