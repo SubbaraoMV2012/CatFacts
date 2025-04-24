@@ -29,21 +29,28 @@ class CatFactViewModel: ObservableObject {
     }
     
     func getCatData() async {
-        isLoading = true
-        showContent = false
+        withAnimation {
+            isLoading = true
+            showError = false
+            showContent = false
+        }
         do {
-            async let catImageUrlString = try catImageServiceProtocol.getCatImageURL()
-            async let catfactMessage = try catFactServiceProtocol.getCatFact()
-            self.catImageUrl = try await catImageUrlString
-            self.catFact = try await catfactMessage
-            withAnimation {
-                showContent = true
+            async let fact = try catFactServiceProtocol.getCatFact()
+            async let imageUrl = try catImageServiceProtocol.getCatImageURL()
+            
+            let (factResult, imageResult) = try await (fact, imageUrl)
+            
+            withAnimation(.easeInOut(duration: 0.5)) {
+                self.catFact = factResult
+                self.catImageUrl = imageResult
+                self.showContent = true
             }
         } catch {
+            self.errorMessage = (error as? LocalizedError)?.errorDescription ?? "Something went wrong"
             showError = true
-            errorMessage = error.localizedDescription.isEmpty ? "Something went wrong while fetching cat content" : error.localizedDescription
         }
-        isLoading = false
+        withAnimation {
+            isLoading = false
+        }
     }
-    
 }
